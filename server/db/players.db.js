@@ -21,7 +21,11 @@ const getAllPlayers = () => {
  * @returns {Object} The created player
  */
 const addPlayer = (nickname, socketId) => {
-  const newPlayer = { id: socketId, nickname };
+  const newPlayer = { 
+    id: socketId, 
+    nickname,
+    score: 0  // Inicializar puntuación en 0
+  };
   players.push(newPlayer);
   return newPlayer;
 };
@@ -59,6 +63,42 @@ const findPlayersByRole = (role) => {
 };
 
 /**
+ * Update player score
+ * @param {string} socketId - Player's socket ID
+ * @param {number} points - Points to add (can be negative)
+ * @returns {Object|null} Updated player or null if not found
+ */
+const updatePlayerScore = (socketId, points) => {
+  const player = findPlayerById(socketId);
+  if (player) {
+    player.score = (player.score || 0) + points; // Permitir puntuaciones negativas
+    return player;
+  }
+  return null;
+};
+
+/**
+ * Get leaderboard sorted by score
+ * @param {boolean} alphabetical - Sort alphabetically instead of by score
+ * @returns {Array} Sorted array of players
+ */
+const getLeaderboard = (alphabetical = false) => {
+  if (alphabetical) {
+    return [...players].sort((a, b) => a.nickname.localeCompare(b.nickname));
+  }
+  return [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
+};
+
+/**
+ * Check if any player has reached winning score
+ * @returns {Object|null} Winning player or null
+ */
+const checkWinningCondition = () => {
+  const winner = players.find((player) => (player.score || 0) >= 100);
+  return winner || null;
+};
+
+/**
  * Get all game data (includes players)
  * @returns {Object} Object containing players array
  */
@@ -67,7 +107,28 @@ const getGameData = () => {
 };
 
 /**
- * Reset game data
+ * Reset game scores only
+ * @returns {void}
+ */
+const resetScores = () => {
+  players.forEach(player => {
+    player.score = 0;
+    delete player.role; // Eliminar roles también
+  });
+};
+
+/**
+ * Reset roles only (keep scores)
+ * @returns {void}
+ */
+const resetRoles = () => {
+  players.forEach(player => {
+    delete player.role; // Eliminar roles pero mantener puntuaciones
+  });
+};
+
+/**
+ * Reset game data completely
  * @returns {void}
  */
 const resetGame = () => {
@@ -82,4 +143,9 @@ module.exports = {
   findPlayersByRole,
   getGameData,
   resetGame,
+  updatePlayerScore,
+  getLeaderboard,
+  checkWinningCondition,
+  resetScores,
+  resetRoles,
 };

@@ -17,12 +17,11 @@ app.use("/game", express.static(path.join(__dirname, "game")));
 app.use("/results", express.static(path.join(__dirname, "results-screen")));
 
 // Routes
-app.use("/api", playersRouter);
+app.use("/api", playersRouter)
 app.use("/api/game", gameRouter);
 
 // Services
 initSocketInstance(httpServer);
-
 httpServer.listen(PORT, () =>
   console.log(`Server running at http://localhost:${PORT}`)
 );

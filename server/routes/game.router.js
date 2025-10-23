@@ -8,5 +8,15 @@ router.post('/start', gameController.startGame);
 router.post('/marco', gameController.notifyMarco);
 router.post('/polo', gameController.notifyPolo);
 router.post('/select-polo', gameController.selectPolo);
+router.post('/polo-especial-not-caught', gameController.handlePoloEspecialNotCaught);
+
+// Nueva ruta para obtener leaderboard
+router.get('/leaderboard', gameController.getLeaderboard);
+
+// Nueva ruta para reiniciar el juego (mantener puntuaciones)
+router.post('/restart', gameController.restartGame);
+
+// Nueva ruta para reiniciar el juego (limpiar puntuaciones)
+router.post('/reset', gameController.resetGame);
 
 module.exports = router;
